@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MetaMask Integration</title>
+</head>
+<body>
+    <h1>MetaMask Wallet Information</h1>
+    <button id="connectButton">Connect to MetaMask</button>
+    <p>Your wallet address: <span id="walletAddress"></span></p>
+    <p>Chain ID: <span id="chainId"></span></p>
+
+    <script>
+        async function checkMetaMask() {
+            if (typeof window.ethereum === 'undefined') {
+                alert('MetaMask is not installed. Please install it to use this feature.');
+                return;
+            }
+
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' });
+                const chainId = parseInt(chainIdHex, 16); // Parse hexadecimal string to a number
+
+                document.getElementById('walletAddress').textContent = accounts[0];
+                document.getElementById('chainId').textContent = chainId;
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while connecting to MetaMask. Please try again.');
+            }
+        }
+
+        function openMetaMaskApp() {
+            window.location.href = 'https://metamask.app.link/dapp/192.168.0.10:5500';
+        }
+
+        document.getElementById('connectButton').addEventListener('click', openMetaMaskApp);
+    </script>
+</body>
+</html>
