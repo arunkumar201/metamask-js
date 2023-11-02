@@ -6,35 +6,31 @@
 <body>
     <h1>MetaMask Wallet Information</h1>
     <button id="connectButton">Connect to MetaMask</button>
+    <button id="back">GO Back</button>
     <p>Your wallet address: <span id="walletAddress"></span></p>
     <p>Chain ID: <span id="chainId"></span></p>
-
+<script src="https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/cdn/metamask-sdk.js"></script>
     <script>
         async function checkMetaMask() {
-            if (typeof window.ethereum === 'undefined') {
-                alert('MetaMask is not installed. Please install it to use this feature.');
-                return;
-            }
-
             try {
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' });
-                const chainId = parseInt(chainIdHex, 16); // Parse hexadecimal string to a number
+	         const MMSDK = new MetaMaskSDK.MetaMaskSDK()
+			 const account= await MMSDK.connect();
+            const ethereum = MMSDK.getProvider() 
+       const res= ethereum.request({ method: 'eth_requestAccounts', params: [] });
 
-                document.getElementById('walletAddress').textContent = accounts[0];
+                const accounts = await ethereum.selectedAddress;
+                const chainIdHex = await ethereum.chainId;
+                const chainId = parseInt(chainIdHex, 16);
+
+                document.getElementById('walletAddress').textContent = accounts;
                 document.getElementById('chainId').textContent = chainId;
             } catch (error) {
                 console.error(error);
                 alert('An error occurred while connecting to MetaMask. Please try again.');
             }
         }
-
-        function openMetaMaskApp() {
-            window.location.href = 'https://metamask.app.link/dapp/main--zingy-croissant-94e535.netlify.app/';
-        }
-
-        document.getElementById('connectButton').addEventListener('click', openMetaMaskApp);
+        document.getElementById('connectButton').addEventListener('click', checkMetaMask);
     </script>
+
 </body>
 </html>
